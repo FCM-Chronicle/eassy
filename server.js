@@ -106,7 +106,7 @@ app.get('/proxy', async (req, res) => {
       content = content.replace(/<meta[^>]*http-equiv="Content-Security-Policy"[^>]*>/gi, '');
       content = content.replace(/<meta[^>]*http-equiv="X-Frame-Options"[^>]*>/gi, '');
       
-      // 강화된 프록시 처리 스크립트
+      // 간단하고 안전한 프록시 처리 스크립트
       const proxyScript = `
         <script>
           // 전역 프록시 함수
@@ -123,116 +123,49 @@ app.get('/proxy', async (req, res) => {
             return '/proxy?url=' + encodeURIComponent('${baseUrl}/' + url);
           }
 
-          function resourceUrl(url) {
-            if (!url || url.startsWith('#') || url.startsWith('javascript:') || url.startsWith('data:')) {
-              return url;
-            }
-            if (url.startsWith('/')) {
-              return '/resource?url=' + encodeURIComponent('${baseUrl}' + url);
-            }
-            if (url.startsWith('http')) {
-              return '/resource?url=' + encodeURIComponent(url);
-            }
-            return '/resource?url=' + encodeURIComponent('${baseUrl}/' + url);
-          }
-
-          // DOM이 로드된 후 실행
-          document.addEventListener('DOMContentLoaded', function() {
-            // 모든 링크 처리
-            const links = document.querySelectorAll('a[href]');
-            links.forEach(link => {
-              const href = link.getAttribute('href');
-              if (href && !href.includes('/proxy?url=')) {
-                link.setAttribute('href', proxyUrl(href));
-              }
-            });
-
-            // 모든 이미지 처리
-            const images = document.querySelectorAll('img[src]');
-            images.forEach(img => {
-              const src = img.getAttribute('src');
-              if (src && !src.includes('/resource?url=')) {
-                img.setAttribute('src', resourceUrl(src));
-              }
-            });
-
-            // 모든 폼 처리
-            const forms = document.querySelectorAll('form');
-            forms.forEach(form => {
-              form.addEventListener('submit', function(e) {
-                const action = form.getAttribute('action');
-                if (action && !action.includes('/proxy?url=')) {
-                  form.setAttribute('action', proxyUrl(action));
+          // 안전한 DOM 처리
+          function processLinks() {
+            try {
+              const links = document.querySelectorAll('a[href]:not([data-proxied])');
+              links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && !href.includes('/proxy?url=')) {
+                  link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = proxyUrl(href);
+                  });
+                  link.setAttribute('data-proxied', 'true');
                 }
               });
-            });
+            } catch (e) {
+              console.log('Link processing error:', e);
+            }
+          }
 
-            // AJAX 요청 인터셉트
+          // 간단한 AJAX 인터셉트 (선택적)
+          if (window.fetch) {
             const originalFetch = window.fetch;
             window.fetch = function(url, options) {
-              if (typeof url === 'string' && url.startsWith('http')) {
-                url = '/resource?url=' + encodeURIComponent(url);
+              try {
+                if (typeof url === 'string' && url.startsWith('http') && !url.includes('render.com')) {
+                  return originalFetch('/resource?url=' + encodeURIComponent(url), options);
+                }
+              } catch (e) {
+                console.log('Fetch proxy error:', e);
               }
               return originalFetch.call(this, url, options);
             };
+          }
 
-            // XMLHttpRequest 인터셉트
-            const originalOpen = XMLHttpRequest.prototype.open;
-            XMLHttpRequest.prototype.open = function(method, url, ...args) {
-              if (typeof url === 'string' && url.startsWith('http')) {
-                url = '/resource?url=' + encodeURIComponent(url);
-              }
-              return originalOpen.call(this, method, url, ...args);
-            };
-          });
+          // DOM 로드 후 실행
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', processLinks);
+          } else {
+            processLinks();
+          }
 
-          // 동적으로 추가되는 요소들 처리
-          const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-              mutation.addedNodes.forEach(function(node) {
-                if (node.nodeType === 1) { // Element node
-                  // 새로 추가된 링크 처리
-                  if (node.tagName === 'A' && node.href) {
-                    const href = node.getAttribute('href');
-                    if (href && !href.includes('/proxy?url=')) {
-                      node.setAttribute('href', proxyUrl(href));
-                    }
-                  }
-                  // 새로 추가된 이미지 처리
-                  if (node.tagName === 'IMG' && node.src) {
-                    const src = node.getAttribute('src');
-                    if (src && !src.includes('/resource?url=')) {
-                      node.setAttribute('src', resourceUrl(src));
-                    }
-                  }
-                  // 하위 요소들도 처리
-                  const childLinks = node.querySelectorAll && node.querySelectorAll('a[href]');
-                  if (childLinks) {
-                    childLinks.forEach(link => {
-                      const href = link.getAttribute('href');
-                      if (href && !href.includes('/proxy?url=')) {
-                        link.setAttribute('href', proxyUrl(href));
-                      }
-                    });
-                  }
-                  const childImages = node.querySelectorAll && node.querySelectorAll('img[src]');
-                  if (childImages) {
-                    childImages.forEach(img => {
-                      const src = img.getAttribute('src');
-                      if (src && !src.includes('/resource?url=')) {
-                        img.setAttribute('src', resourceUrl(src));
-                      }
-                    });
-                  }
-                }
-              });
-            });
-          });
-
-          observer.observe(document.body, {
-            childList: true,
-            subtree: true
-          });
+          // 주기적으로 새 링크 처리 (MutationObserver 대신)
+          setInterval(processLinks, 2000);
         </script>
       `;
       
