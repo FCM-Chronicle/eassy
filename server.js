@@ -20,6 +20,7 @@ app.get('/proxy', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`서버 실행: http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`서버 실행: http://0.0.0.0:${PORT}`);
+  console.log(`외부 접속: http://218.147.194.380:${PORT}`);
 });
