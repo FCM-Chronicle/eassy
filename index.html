@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebProxy - 실제 작동하는 프록시</title>
+    <title>🌐</title>
     <style>
         * {
             margin: 0;
@@ -13,23 +13,28 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            color: #333;
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 15px 20px;
+            padding: 20px 0;
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
-        .nav-container {
-            max-width: 1200px;
+        .container {
+            max-width: 1000px;
             margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav {
             display: flex;
             align-items: center;
             gap: 20px;
@@ -37,9 +42,10 @@
 
         .logo {
             color: white;
-            font-size: 1.5em;
+            font-size: 1.8em;
             font-weight: bold;
             text-decoration: none;
+            cursor: pointer;
         }
 
         .url-bar {
@@ -49,177 +55,198 @@
 
         .url-input {
             width: 100%;
-            padding: 12px 50px 12px 15px;
+            padding: 15px 60px 15px 20px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.95);
             font-size: 16px;
             outline: none;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .url-input:focus {
             border-color: #4CAF50;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.4);
+            transform: translateY(-2px);
         }
 
         .go-btn {
             position: absolute;
-            right: 5px;
+            right: 8px;
             top: 50%;
             transform: translateY(-50%);
             background: linear-gradient(135deg, #4CAF50, #45a049);
             border: none;
-            border-radius: 20px;
+            border-radius: 50px;
             color: white;
-            padding: 8px 15px;
+            padding: 10px 20px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .go-btn:hover {
-            transform: translateY(-50%) scale(1.05);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        .control-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
             transition: all 0.3s ease;
             font-size: 14px;
         }
 
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
+        .go-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
         }
 
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        .main {
+            padding: 40px 0;
         }
 
-        .welcome-screen {
+        .welcome {
             text-align: center;
             color: white;
-            padding: 50px 20px;
+            margin-bottom: 50px;
         }
 
-        .welcome-title {
-            font-size: 3em;
-            margin-bottom: 20px;
+        .welcome h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
         }
 
-        .welcome-subtitle {
-            font-size: 1.2em;
+        .welcome p {
+            font-size: 1.3em;
             opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quick-sites {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
             margin-bottom: 40px;
         }
 
-        .quick-access {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-        }
-
         .quick-site {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 30px 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
+            transition: all 0.4s ease;
+            text-align: center;
             color: white;
+            animation: fadeInUp 1s ease-out 0.4s both;
         }
 
         .quick-site:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-10px) scale(1.02);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
         .site-icon {
-            font-size: 2em;
-            margin-bottom: 10px;
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
         }
 
         .site-name {
+            font-size: 1.3em;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .site-desc {
-            font-size: 0.9em;
+            font-size: 0.95em;
             opacity: 0.8;
         }
 
-        .content-frame {
-            display: none;
+        .content-area {
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-top: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            display: none;
+            margin-top: 30px;
+            animation: slideUp 0.5s ease-out;
         }
 
-        .frame-header {
-            background: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-            padding: 10px 20px;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .current-url {
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             font-size: 14px;
-            color: #666;
-            flex: 1;
+            opacity: 0.9;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            flex: 1;
+            margin-right: 15px;
         }
 
-        .content-area {
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .proxy-frame {
+            width: 100%;
+            height: 70vh;
+            border: none;
             background: white;
-            min-height: 600px;
-            padding: 20px;
-            position: relative;
         }
 
         .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 400px;
-            font-size: 1.2em;
+            text-align: center;
+            padding: 60px 20px;
             color: #666;
+            display: none;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
             animation: spin 1s linear infinite;
-            margin-right: 15px;
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -227,367 +254,219 @@
             100% { transform: rotate(360deg); }
         }
 
-        .error-message {
-            background: #ffebee;
-            border: 1px solid #ffcdd2;
-            color: #c62828;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
         }
 
-        .proxy-content {
-            line-height: 1.6;
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            animation: fadeInUp 1s ease-out 0.6s both;
         }
 
-        .proxy-content img {
-            max-width: 100%;
-            height: auto;
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
         }
 
-        .proxy-content a {
-            color: #2196F3;
-            text-decoration: none;
+        .feature-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
-        .proxy-content a:hover {
-            text-decoration: underline;
+        .feature-desc {
+            opacity: 0.8;
+            line-height: 1.5;
         }
 
         @media (max-width: 768px) {
-            .nav-container {
+            .nav {
                 flex-direction: column;
                 gap: 15px;
             }
 
-            .controls {
-                order: -1;
-                width: 100%;
-                justify-content: center;
+            .welcome h1 {
+                font-size: 2.5em;
             }
 
-            .welcome-title {
-                font-size: 2em;
+            .quick-sites {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
             }
 
-            .quick-access {
+            .quick-site {
+                padding: 20px 15px;
+            }
+
+            .site-icon {
+                font-size: 2.5em;
+            }
+
+            .features {
                 grid-template-columns: 1fr;
             }
         }
 
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #4CAF50;
-            margin-left: 10px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        .error {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px;
         }
     </style>
 </head>
 <body>
     <header class="header">
-        <div class="nav-container">
-            <a href="#" class="logo" onclick="showWelcome()">🌐 WebProxy</a>
-            <div class="url-bar">
-                <input type="url" class="url-input" id="urlInput" placeholder="웹사이트 URL을 입력하세요 (예: https://www.example.com)">
-                <button class="go-btn" onclick="loadSite()">이동</button>
-            </div>
-            <div class="controls">
-                <button class="control-btn" onclick="goBack()">← 뒤로</button>
-                <button class="control-btn" onclick="goForward()">앞으로 →</button>
-                <button class="control-btn" onclick="refreshPage()">🔄</button>
-                <div class="status-indicator" id="statusIndicator"></div>
+        <div class="container">
+            <div class="nav">
+                <div class="logo" onclick="showWelcome()">🌐 WebProxy</div>
+                <div class="url-bar">
+                    <input type="url" class="url-input" id="urlInput" 
+                           placeholder="웹사이트 URL을 입력하세요 (예: https://www.google.com)">
+                    <button class="go-btn" onclick="loadSite()">이동</button>
+                </div>
             </div>
         </div>
     </header>
 
-    <div class="main-container">
-        <div class="welcome-screen" id="welcomeScreen">
-            <h1 class="welcome-title">🚀 WebProxy</h1>
-            <p class="welcome-subtitle">안전하고 빠른 웹 프록시 서비스로 자유로운 인터넷을 경험하세요</p>
-            
-            <div class="quick-access">
-                <div class="quick-site" onclick="loadQuickSite('https://www.google.com')">
-                    <div class="site-icon">🔍</div>
-                    <div class="site-name">Google</div>
-                    <div class="site-desc">검색 엔진</div>
-                </div>
-                <div class="quick-site" onclick="loadQuickSite('https://www.wikipedia.org')">
-                    <div class="site-icon">📚</div>
-                    <div class="site-name">Wikipedia</div>
-                    <div class="site-desc">자유 백과사전</div>
-                </div>
-                <div class="quick-site" onclick="loadQuickSite('https://www.github.com')">
-                    <div class="site-icon">💻</div>
-                    <div class="site-name">GitHub</div>
-                    <div class="site-desc">개발자 플랫폼</div>
-                </div>
-                <div class="quick-site" onclick="loadQuickSite('https://news.ycombinator.com')">
-                    <div class="site-icon">📰</div>
-                    <div class="site-name">Hacker News</div>
-                    <div class="site-desc">기술 뉴스</div>
-                </div>
-            </div>
-        </div>
+    <main class="main">
+        <div class="container">
+            <div class="welcome" id="welcomeSection">
+                <h1>🚀 무료 웹 프록시</h1>
+                <p>안전하고 빠른 프록시로 자유로운 인터넷을 경험하세요</p>
 
-        <div class="content-frame" id="contentFrame">
-            <div class="frame-header">
-                <div class="current-url" id="currentUrl"></div>
-            </div>
-            <div class="content-area" id="contentArea">
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    페이지를 불러오는 중...
+                <div class="quick-sites">
+                    <div class="quick-site" onclick="loadQuickSite('https://www.google.com')">
+                        <span class="site-icon">🔍</span>
+                        <div class="site-name">Google</div>
+                        <div class="site-desc">전세계 1위 검색엔진</div>
+                    </div>
+                    <div class="quick-site" onclick="loadQuickSite('https://www.youtube.com')">
+                        <span class="site-icon">📺</span>
+                        <div class="site-name">YouTube</div>
+                        <div class="site-desc">동영상 스트리밍</div>
+                    </div>
+                    <div class="quick-site" onclick="loadQuickSite('https://www.wikipedia.org')">
+                        <span class="site-icon">📚</span>
+                        <div class="site-name">Wikipedia</div>
+                        <div class="site-desc">자유 백과사전</div>
+                    </div>
+                    <div class="quick-site" onclick="loadQuickSite('https://www.github.com')">
+                        <span class="site-icon">💻</span>
+                        <div class="site-name">GitHub</div>
+                        <div class="site-desc">개발자 플랫폼</div>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon">🛡️</div>
+                        <div class="feature-title">개인정보 보호</div>
+                        <div class="feature-desc">IP 주소와 개인정보를 안전하게 보호합니다</div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-title">빠른 속도</div>
+                        <div class="feature-desc">최적화된 서버로 빠른 접속을 제공합니다</div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">🌍</div>
+                        <div class="feature-title">전세계 접속</div>
+                        <div class="feature-desc">지역 제한 없이 모든 사이트에 접속하세요</div>
+                    </div>
                 </div>
             </div>
+
+            <div class="loading" id="loadingSection">
+                <div class="spinner"></div>
+                <div>페이지를 불러오는 중입니다...</div>
+            </div>
+
+            <div class="content-area" id="contentArea">
+                <div class="content-header">
+                    <div class="current-url" id="currentUrl"></div>
+                    <button class="close-btn" onclick="showWelcome()">✕ 닫기</button>
+                </div>
+                <iframe class="proxy-frame" id="proxyFrame"></iframe>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script>
-        let history = [];
-        let currentIndex = -1;
-        
-        // CORS 프록시 서비스들
-        const proxyServices = [
-            'https://api.allorigins.win/raw?url=',
-            'https://corsproxy.io/?',
-            'https://cors-anywhere.herokuapp.com/',
-            'https://thingproxy.freeboard.io/fetch/'
-        ];
-        
-        let currentProxyIndex = 0;
-
-        async function loadSite(url = null) {
+        function loadSite(url = null) {
             const targetUrl = url || document.getElementById('urlInput').value.trim();
             
             if (!targetUrl) {
-                alert('URL을 입력해주세요.');
+                alert('URL을 입력해주세요!');
                 return;
             }
 
-            // URL 검증 및 수정
             let processedUrl = targetUrl;
             if (!processedUrl.startsWith('http://') && !processedUrl.startsWith('https://')) {
                 processedUrl = 'https://' + processedUrl;
             }
 
-            try {
-                new URL(processedUrl);
-            } catch (e) {
-                alert('올바른 URL을 입력해주세요.');
-                return;
-            }
-
-            // UI 업데이트
-            showContentFrame();
             showLoading();
-            updateUrlDisplay(processedUrl);
             document.getElementById('urlInput').value = processedUrl;
+            document.getElementById('currentUrl').textContent = processedUrl;
 
-            // 히스토리 관리
-            if (currentIndex === -1 || history[currentIndex] !== processedUrl) {
-                history = history.slice(0, currentIndex + 1);
-                history.push(processedUrl);
-                currentIndex = history.length - 1;
-            }
-
-            try {
-                await fetchAndDisplayContent(processedUrl);
-            } catch (error) {
-                console.error('Error loading site:', error);
-                showError('페이지를 불러올 수 없습니다. 다른 URL을 시도해보세요.');
-            }
-        }
-
-        async function fetchAndDisplayContent(url) {
-            const contentArea = document.getElementById('contentArea');
-            let success = false;
-
-            // 여러 프록시 서비스 시도
-            for (let i = 0; i < proxyServices.length && !success; i++) {
-                const proxyIndex = (currentProxyIndex + i) % proxyServices.length;
-                const proxyUrl = proxyServices[proxyIndex] + encodeURIComponent(url);
-                
-                try {
-                    console.log(`Trying proxy ${proxyIndex + 1}: ${proxyServices[proxyIndex]}`);
-                    
-                    const response = await fetch(proxyUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-                        }
-                    });
-
-                    if (response.ok) {
-                        const content = await response.text();
-                        displayContent(content, url);
-                        currentProxyIndex = proxyIndex;
-                        success = true;
-                        updateStatusIndicator('success');
-                    }
-                } catch (error) {
-                    console.log(`Proxy ${proxyIndex + 1} failed:`, error.message);
-                    continue;
-                }
-            }
-
-            if (!success) {
-                // 직접 접근 시도 (CORS 제한이 없는 경우)
-                try {
-                    const response = await fetch(url, {
-                        mode: 'cors',
-                        credentials: 'omit'
-                    });
-                    
-                    if (response.ok) {
-                        const content = await response.text();
-                        displayContent(content, url);
-                        success = true;
-                        updateStatusIndicator('success');
-                    }
-                } catch (error) {
-                    console.log('Direct access failed:', error.message);
-                }
-            }
-
-            if (!success) {
-                // 최후 수단: iframe으로 시도
-                try {
-                    displayIframe(url);
-                    updateStatusIndicator('warning');
-                } catch (error) {
-                    showError('페이지를 불러올 수 없습니다. 해당 웹사이트가 프록시 접근을 차단했을 수 있습니다.');
-                    updateStatusIndicator('error');
-                }
-            }
-        }
-
-        function displayContent(html, originalUrl) {
-            const contentArea = document.getElementById('contentArea');
+            const proxyUrl = '/proxy?url=' + encodeURIComponent(processedUrl);
+            const frame = document.getElementById('proxyFrame');
             
-            // HTML 내용 처리 및 상대 링크 수정
-            let processedHtml = html;
-            
-            // 기본 URL 설정
-            const baseUrl = new URL(originalUrl).origin;
-            
-            // 상대 링크를 절대 링크로 변환
-            processedHtml = processedHtml.replace(/href="\/([^"]*)"/, `href="${baseUrl}/$1"`);
-            processedHtml = processedHtml.replace(/src="\/([^"]*)"/, `src="${baseUrl}/$1"`);
-            
-            // 링크 클릭 시 프록시를 통해 이동하도록 수정
-            processedHtml = processedHtml.replace(/<a\s+href="([^"]*)"([^>]*)>/gi, 
-                (match, href, rest) => {
-                    if (href.startsWith('http')) {
-                        return `<a href="javascript:void(0)" onclick="loadSite('${href}')"${rest}>`;
-                    }
-                    return match;
-                });
+            frame.onload = function() {
+                hideLoading();
+                showContent();
+            };
 
-            contentArea.innerHTML = `<div class="proxy-content">${processedHtml}</div>`;
-            hideLoading();
-        }
+            frame.onerror = function() {
+                hideLoading();
+                showError('페이지를 불러올 수 없습니다.');
+            };
 
-        function displayIframe(url) {
-            const contentArea = document.getElementById('contentArea');
-            contentArea.innerHTML = `
-                <div class="error-message">
-                    ⚠️ 직접 프록시를 통한 접근이 제한되어 iframe으로 표시합니다. 일부 기능이 제한될 수 있습니다.
-                </div>
-                <iframe src="${url}" style="width: 100%; height: 500px; border: none; border-radius: 8px;"></iframe>
-            `;
-            hideLoading();
-        }
-
-        function showError(message) {
-            const contentArea = document.getElementById('contentArea');
-            contentArea.innerHTML = `
-                <div class="error-message">
-                    ❌ ${message}
-                    <br><br>
-                    <strong>해결 방법:</strong>
-                    <ul style="margin-top: 10px; padding-left: 20px;">
-                        <li>URL이 올바른지 확인해주세요</li>
-                        <li>https://로 시작하는 URL을 사용해보세요</li>
-                        <li>다른 웹사이트를 시도해보세요</li>
-                    </ul>
-                </div>
-            `;
-            hideLoading();
-        }
-
-        function showLoading() {
-            document.getElementById('loading').style.display = 'flex';
-        }
-
-        function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
-        }
-
-        function showContentFrame() {
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('contentFrame').style.display = 'block';
-        }
-
-        function showWelcome() {
-            document.getElementById('welcomeScreen').style.display = 'block';
-            document.getElementById('contentFrame').style.display = 'none';
-            document.getElementById('urlInput').value = '';
-        }
-
-        function updateUrlDisplay(url) {
-            document.getElementById('currentUrl').textContent = url;
-        }
-
-        function updateStatusIndicator(status) {
-            const indicator = document.getElementById('statusIndicator');
-            indicator.className = 'status-indicator';
-            
-            switch(status) {
-                case 'success':
-                    indicator.style.background = '#4CAF50';
-                    break;
-                case 'warning':
-                    indicator.style.background = '#FF9800';
-                    break;
-                case 'error':
-                    indicator.style.background = '#F44336';
-                    break;
-                default:
-                    indicator.style.background = '#2196F3';
-            }
+            frame.src = proxyUrl;
         }
 
         function loadQuickSite(url) {
             loadSite(url);
         }
 
-        function goBack() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                loadSite(history[currentIndex]);
-            }
+        function showLoading() {
+            document.getElementById('welcomeSection').style.display = 'none';
+            document.getElementById('contentArea').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
         }
 
-        function goForward() {
-            if (currentIndex < history.length - 1) {
-                currentIndex++;
-                loadSite(history[currentIndex]);
-            }
+        function hideLoading() {
+            document.getElementById('loadingSection').style.display = 'none';
         }
 
-        function refreshPage() {
-            if (currentIndex >= 0 && history[currentIndex]) {
-                loadSite(history[currentIndex]);
-            }
+        function showContent() {
+            document.getElementById('contentArea').style.display = 'block';
+        }
+
+        function showWelcome() {
+            document.getElementById('welcomeSection').style.display = 'block';
+            document.getElementById('contentArea').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('urlInput').value = '';
+        }
+
+        function showError(message) {
+            hideLoading();
+            document.getElementById('contentArea').innerHTML = 
+                `<div class="error">❌ ${message}<br><br>다른 웹사이트를 시도해보세요.</div>`;
+            showContent();
         }
 
         // 엔터키 처리
@@ -597,9 +476,9 @@
             }
         });
 
-        // 초기화
-        document.addEventListener('DOMContentLoaded', function() {
-            updateStatusIndicator('ready');
+        // 페이지 로드 애니메이션
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '1';
         });
     </script>
 </body>
